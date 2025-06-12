@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Petevents.css";
 
 const events = [
   {
@@ -70,28 +71,22 @@ export default function PetEventsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow p-6 text-center">
-        <h1 className="text-3xl font-bold text-pink-600">🐾 Pet Events</h1>
-        <p className="text-gray-600 mt-2">
-          Join us for fun-filled events for you and your furry friends!
-        </p>
+    <div className="pet-events-page">
+      <header className="header">
+        <h1>🐾 Pet Events</h1>
+        <p>Join us for fun-filled events for you and your furry friends!</p>
       </header>
 
-      {/* Search & Filter Bar */}
-      <div className="p-4 bg-white shadow-sm flex flex-col sm:flex-row justify-center items-center gap-4">
+      <div className="search-filter">
         <input
           type="text"
           placeholder="Search events..."
-          className="w-full max-w-xl border border-gray-300 rounded-md p-2"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <select
           value={eventType}
           onChange={(e) => setEventType(e.target.value)}
-          className="w-full max-w-xs border border-gray-300 rounded-md p-2"
         >
           <option value="">All Types</option>
           {uniqueTypes.map((type, idx) => (
@@ -102,57 +97,33 @@ export default function PetEventsPage() {
         </select>
       </div>
 
-      {/* Events Grid */}
-      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filteredEvents.length === 0 && (
-          <p className="col-span-full text-center text-gray-500">
-            No events found.
-          </p>
-        )}
-        {filteredEvents.map((event, index) => (
-          <div
-            key={index}
-            className="overflow-hidden rounded-2xl shadow-lg bg-white"
-          >
-            <img
-              src={event.img}
-              alt={event.name}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-4 flex flex-col items-center">
-              <h3 className="text-lg font-bold text-center">{event.name}</h3>
-              <p className="text-center text-sm text-gray-500">{event.type}</p>
-              <div className="mt-2 text-sm text-gray-600 text-center">
-                <p>
-                  <strong>Location:</strong> {event.location}
-                </p>
-                <p>
-                  <strong>Time:</strong> {event.time}
-                </p>
+      <div className="events-grid">
+        {filteredEvents.length === 0 ? (
+          <p className="no-events">No events found.</p>
+        ) : (
+          filteredEvents.map((event, index) => (
+            <div key={index} className="event-card">
+              <img src={event.img} alt={event.name} />
+              <div className="event-info">
+                <h3>{event.name}</h3>
+                <p className="type">{event.type}</p>
+                <p><strong>Location:</strong> {event.location}</p>
+                <p><strong>Time:</strong> {event.time}</p>
+                <button onClick={() => setSelectedEvent(event)}>Book Now</button>
               </div>
-              <button
-                className="mt-4 px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700"
-                onClick={() => setSelectedEvent(event)}
-              >
-                Book Now
-              </button>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
-      {/* Booking Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">
-              Book: {selectedEvent.name}
-            </h2>
-            <form onSubmit={handleBookingSubmit} className="space-y-4">
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Book: {selectedEvent.name}</h2>
+            <form onSubmit={handleBookingSubmit}>
               <input
                 type="text"
                 placeholder="Your Name"
-                className="w-full border border-gray-300 rounded-md p-2"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -160,25 +131,13 @@ export default function PetEventsPage() {
               <input
                 type="email"
                 placeholder="Your Email"
-                className="w-full border border-gray-300 rounded-md p-2"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedEvent(null)}
-                  className="px-4 py-2 border border-gray-300 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700"
-                >
-                  Confirm Booking
-                </button>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setSelectedEvent(null)}>Cancel</button>
+                <button type="submit">Confirm Booking</button>
               </div>
             </form>
           </div>
